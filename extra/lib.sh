@@ -53,7 +53,9 @@ function package() {
 
 function install_unison() {
   cd /
-  dl_pipe "https://www.archlinux.org/packages/extra/x86_64/unison/download/" | sudo tar Jx
+  # link has changed to zst file
+  # dl_pipe "https://www.archlinux.org/packages/extra/x86_64/unison/download/" | sudo tar Jx
+  sudo apt-get install unison
 }
 
 function repo_osquery() {
