@@ -326,6 +326,8 @@ CREATE TABLE `registration_tokens` (
   `token` varchar(250) NOT NULL,
   `used` tinyint(1) NOT NULL,
   `team_id` int(11) NOT NULL,
+  `cohort_id` int(11),
+  `cohort_member_id` int(11),
   `created_ts` timestamp NOT NULL DEFAULT 0,
   `use_ts` timestamp NOT NULL,
   PRIMARY KEY (`id`),
