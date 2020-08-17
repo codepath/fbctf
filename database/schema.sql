@@ -336,6 +336,25 @@ CREATE TABLE `registration_tokens` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `password_reset_tokens`
+--
+
+DROP TABLE IF EXISTS `password_reset_tokens`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `password_reset_tokens` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `token` varchar(250) NOT NULL,
+  `team_id` int(11) NOT NULL,
+  `used` tinyint(1) NOT NULL,
+  `created_ts` timestamp NOT NULL DEFAULT 0,
+  `use_ts` timestamp NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `token` (`token`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `scores_log`
 --
 

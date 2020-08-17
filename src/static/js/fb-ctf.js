@@ -436,7 +436,7 @@ function setupInputListeners() {
 
         // Load initial filters
         loadSavedFilterModule();
-        
+
         // Load leaderboard module
         loadLeaderboardModule();
 
@@ -803,7 +803,7 @@ function setupInputListeners() {
           $('.country-type', $container).text(type);
           $('.country-category', $container).text(category);
           $('.country-owner', $container).text(owner);
-    
+
           // Loop for choices
           for (var i = 0; i < $mchoices.length; i++) {
             if ($mchoices[i] != '') {
@@ -812,7 +812,7 @@ function setupInputListeners() {
               $('label.mchoice' + i + '', $container).text($mchoices[i]);
             }
           }
-        
+
           if ($.inArray(level_id, FB_CTF.data.CAPTURES) != -1) {
             $('.answer_no_bases').addClass('completely-hidden');
             $('.answer_captured').removeClass('completely-hidden');
@@ -840,7 +840,7 @@ function setupInputListeners() {
             $('.js-trigger-hint', $container).on('click', function(event) {
               event.preventDefault();
               $('.js-trigger-hint').unbind('click');
-              
+
               if (hint_cost > 0) {
                 Modal.loadPopup('p=action&modal=hint-confirm', 'action-hint-confirm', function() {
                   $('#hint_close').click(function() {
@@ -861,7 +861,7 @@ function setupInputListeners() {
                       level_id: hint_level,
                       csrf_token: csrf_token
                     };
-        
+
                     $.post(
                       'index.php?p=game&ajax=true',
                       hint_data
@@ -904,7 +904,7 @@ function setupInputListeners() {
 
           $('.js-trigger-score', $container).on('click', function(event) {
             event.preventDefault();
-  
+
             var score_level = $('input[name=level_id]', $container)[0].value;
             var score_answer = $('.country-capture-form input[name=answer]:checked', $container).val();
             var csrf_token = $('input[name=csrf_token]')[0].value;
@@ -918,7 +918,7 @@ function setupInputListeners() {
                 answer: score_answer,
                 csrf_token: csrf_token
               };
-    
+
               $.post(
                 'index.php?p=game&ajax=true',
                 score_data
@@ -933,7 +933,7 @@ function setupInputListeners() {
                   $($container).on('keypress', function(e) {
                   if (e.keyCode == 13) {
                       e.preventDefault();
-                    } 
+                    }
                   });
                   $('.js-trigger-score', $container).text('YES!');
                   $('.radio-list :input:checked', $container).next('label').css("color", "#00ff2a");
@@ -969,7 +969,7 @@ function setupInputListeners() {
         Modal.loadPopup('p=country&modal=capture', 'country-capture', function() {
           var $container = $('.fb-modal-content');
 
-          
+
           $('.country-name', $container).text(country);
           $('.country-title', $container).text(title);
           $('input[name=level_id]', $container).attr('value', level_id);
@@ -1022,7 +1022,7 @@ function setupInputListeners() {
             $('.answer_no_bases').addClass('completely-hidden');
             $('.answer_captured').removeClass('completely-hidden');
           }
-          
+
           //
           // event listeners
           //
@@ -1044,7 +1044,7 @@ function setupInputListeners() {
             $('.js-trigger-hint', $container).on('click', function(event) {
               event.preventDefault();
               $('.js-trigger-hint').unbind('click');
-              
+
               if (hint_cost > 0) {
                 Modal.loadPopup('p=action&modal=hint-confirm', 'action-hint-confirm', function() {
                   $('#hint_close').click(function() {
@@ -1065,7 +1065,7 @@ function setupInputListeners() {
                       level_id: hint_level,
                       csrf_token: csrf_token
                     };
-        
+
                     $.post(
                       'index.php?p=game&ajax=true',
                       hint_data
@@ -1133,7 +1133,7 @@ function setupInputListeners() {
                 $($container).on('keypress', function(e) {
                 if (e.keyCode == 13) {
                     e.preventDefault();
-                  } 
+                  }
                 });
                 $('.js-trigger-score', $container).text('YES!');
                 $('input[name=answer]', $container).css("background-color", "#1f7a1f");
@@ -1577,7 +1577,7 @@ function setupInputListeners() {
         }
       });
     }
-    
+
     /**
      * load the team data
      */
@@ -1633,8 +1633,8 @@ function setupInputListeners() {
         var filterPos = $('div .filter-category').scrollTop();
 
         return loadModuleGeneric(
-          filterModulePath, 
-          filterTargetSelector, 
+          filterModulePath,
+          filterTargetSelector,
           function() {
             refresh_active_filter = false;
             Filter.rememberFilters(filterList);
@@ -1681,7 +1681,7 @@ function setupInputListeners() {
         });
       }
     }
-    
+
     /**
      * verify and active session, or redirect to login
      */
@@ -2614,6 +2614,8 @@ function setupInputListeners() {
     } else {
       $('#register_button').on('click', Index.registerTeam);
     }
+    $('#password_reset_request_button').on('click', Index.passwordResetRequest);
+    $('#password_reset_button').on('click', Index.passwordReset);
 
     // load the svg sprite. This is in the FB_CTF namespace
     //  rather than the buildkit as this is the recommended
@@ -2753,11 +2755,11 @@ function setupInputListeners() {
         $('.js-trigger-account-team-password-save').click();
       }
     });
-    
+
     // change password
     $body.on('click', '.js-trigger-account-team-password-save', function(event) {
       event.preventDefault();
-      
+
       var current_password = $('.team-password-form input[name=current_password]')[0].value;
       var csrf_token = $('.team-name-form input[name=csrf_token]')[0].value;
       var new_password;

@@ -66,6 +66,49 @@ function teamLogoFormError() {
   });
 }
 
+function emailFormError() {
+  $('.el--text')[0].classList.add('form-error');
+  $('.fb-form input').on('change', function() {
+    $('.el--text')[0].classList.remove('form-error');
+  });
+}
+
+function passwordResetFormError(errortype) {
+  if (errortype === 'length') {
+    $('.el--password')[0].classList.add('form-error');
+    $('#pw_error')[0].classList.remove('completely-hidden');
+  }
+  if (errortype === 'notmatch') {
+    $('.el--password')[1].classList.add('form-error');
+    $('#confirm_error')[0].classList.remove('completely-hidden');
+  }
+  if (errortype === 'toosimple') {
+    $('.el--password')[0].classList.add('form-error');
+    $('.el--password')[1].classList.add('form-error');
+    $('#password_error')[0].classList.remove('completely-hidden');
+    $('#strong_pw')[0].classList.remove('completely-hidden');
+  }
+  if (errortype === 'tokenerror') {
+    $('#token_error')[0].classList.remove('completely-hidden');
+  }
+  $('.fb-form input[type="password"]').on('change', function() {
+    if (errortype === 'length') {
+      $('.el--password')[0].classList.remove('form-error');
+      $('#pw_error')[0].classList.add('completely-hidden');
+    }
+    if (errortype === 'notmatch') {
+      $('.el--password')[1].classList.remove('form-error');
+      $('#confirm_error')[0].classList.add('completely-hidden');
+    }
+    if (errortype === 'toosimple') {
+      $('.el--password')[0].classList.remove('form-error');
+      $('.el--password')[1].classList.remove('form-error');
+      $('#password_error')[0].classList.add('completely-hidden');
+    }
+  });
+}
+
+
 function verifyTeamName(context) {
   if (context === 'register') {
     var teamName = String($('.fb-form input[name="team_name"]')[0].value);
@@ -137,6 +180,34 @@ function verifyTeamLogo(): {isCustom: boolean, type: string, logo: number, error
   }
 }
 
+function verifyEmail(context) {
+  if (context === 'password_reset_request') {
+    var email = String($('.fb-form input[name="email"]')[0].value);
+    if (email.length === 0) {
+      emailFormError();
+      return false;
+    } else {
+      return email;
+    }
+  }
+}
+
+function verifyResetPassword() {
+  var teamPassword = $('.fb-form input[name="password"]')[0].value;
+  if (teamPassword.length === 0) {
+    passwordResetFormError('length');
+    return false;
+  } else {
+    var confirm_password = $('.fb-form input[name="confirm_password"]')[0].value;
+    if (teamPassword != confirm_password) {
+      passwordResetFormError('notmatch');
+      return false;
+    } else {
+      return teamPassword;
+    }
+  }
+}
+
 function goToPage(page) {
   window.location.href = '/index.php?p=' + page;
 }
@@ -169,6 +240,12 @@ function sendIndexRequest(request_data) {
       }
       if (responseData.message === 'Registration failed') {
         teamNameFormError();
+      }
+      if (responseData.message === 'Password reset request failed') {
+        emailFormError();
+      }
+      if (responseData.message === 'Password reset failed') {
+        passwordResetFormError('tokenerror');
       }
     }
   });
@@ -258,5 +335,32 @@ module.exports = {
 
   loginError: function() {
     $('.fb-form')[0].classList.add('form-error');
+  },
+
+  passwordResetRequest: function() {
+    var email = verifyEmail('password_reset_request');
+
+    if (email) {
+      var request_data = {
+        action: 'password_reset_request',
+        email: email
+      };
+      sendIndexRequest(request_data);
+    }
+  },
+
+  passwordReset: function() {
+    var url = new URL(window.location.href);
+    var token = url.searchParams.get("token");
+
+    var password = verifyResetPassword();
+    if (password) {
+      var request_data = {
+        action: 'password_reset',
+        password: password,
+        token: token
+      };
+      sendIndexRequest(request_data);
+    }
   }
 };

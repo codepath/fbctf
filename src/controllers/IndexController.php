@@ -35,6 +35,8 @@ class IndexController extends Controller {
       'mobile',
       'game',
       'admin',
+      'password_reset_request',
+      'password_reset'
     );
   }
 
@@ -1357,6 +1359,113 @@ class IndexController extends Controller {
       </nav>;
   }
 
+  public async function genRenderPasswordResetRequestContent(): Awaitable<:xhp> {
+    if (SessionUtils::sessionActive()) {
+      throw new IndexRedirectException();
+    }
+    return
+      <main role="main" class="fb-main page--login full-height fb-scroll">
+        <header class="fb-section-header fb-container">
+          <h1 class="fb-glitch" data-text={tr('Password Reset')}>
+            {tr('Password Reset Request')}
+          </h1>
+        </header>
+        <div class="fb-login">
+          <form class="fb-form">
+            <input type="hidden" name="action" value="password_reset_request" />
+            <fieldset class="form-set fb-container container--small">
+              <div class="form-el el--text">
+                <label for="">{tr('Email')}</label>
+                <input
+                  autocomplete="off"
+                  name="email"
+                  type="text"
+                  maxlength={20}
+                />
+              </div>
+            </fieldset>
+            <div class="form-el--actions">
+              <button
+                id="password_reset_request_button"
+                class="fb-cta cta--yellow"
+                type="button">
+                {tr('Submit')}
+              </button>
+            </div>
+          </form>
+        </div>
+      </main>;
+
+  }
+
+  public async function genRenderPasswordResetContent(): Awaitable<:xhp> {
+    if (SessionUtils::sessionActive()) {
+      throw new IndexRedirectException();
+    }
+
+    return
+      <main role="main" class="fb-main page--login full-height fb-scroll">
+        <header class="fb-section-header fb-container">
+          <h1 class="fb-glitch" data-text={tr('Password Reset')}>
+            {tr('Password Reset Request')}
+          </h1>
+        </header>
+        <div class="fb-password-reset">
+          <form class="fb-form">
+            <input type="hidden" name="action" value="password_reset" />
+            <fieldset class="form-set fb-container container--small">
+
+              <div class="form-el el--text el--password">
+                <label for="">{tr('Password')}</label>
+                <input autocomplete="off" name="password" type="password"/>
+              </div>
+              <div id="pw_error" class="form-el el--text completely-hidden">
+                <label for=""></label>
+                <h6 style="color:red;">Please enter a password</h6>
+              </div>
+              <div id="strong_pw" class="form-el el--text completely-hidden">
+                <label for=""></label>
+                <ul>
+                  <li>• Passwords must be at least 12 characters.</li>
+                  <li>• Use upper and lower case letters.</li>
+                  <li>• Use at least one number.</li>
+                </ul>
+              </div>
+              <div class="form-el el--text el--password">
+                <label for="">{tr('Confirm Password')}</label>
+                <input autocomplete="off" name="confirm_password" type="password"/>
+              </div>
+              <div id="confirm_error" class="form-el el--text completely-hidden">
+                <label for=""></label>
+                <h6 style="color:red;">Passwords do not match</h6>
+              </div>
+              <div id="password_error" class="form-el el--text completely-hidden">
+                <label for=""></label>
+                <h6 style="color:red;">{tr('Password is too simple')}</h6>
+              </div>
+              <div id="token_error" class="form-el el--text completely-hidden">
+                <label for=""></label>
+                <h6 style="color:red;">Please check token</h6>
+              </div>
+            </fieldset>
+            <div class="form-el--actions fb-container container--small">
+              <p>
+                <button
+                  id="password_reset_button"
+                  class="fb-cta cta--yellow"
+                  type="button">
+                  {tr('Reset')}
+                </button>
+              </p>
+            </div>
+          </form>
+        </div>
+      </main>;
+
+
+  }
+
+
   public async function genRenderPage(string $page): Awaitable<:xhp> {
     switch ($page) {
       case 'main':
@@ -1373,6 +1482,10 @@ class IndexController extends Controller {
         return $this->renderRulesContent();
       case 'countdown':
         return await $this->genRenderCountdownContent();
+      case 'password_reset_request':
+        return await $this->genRenderPasswordResetRequestContent();
+      case 'password_reset':
+        return await $this->genRenderPasswordResetContent();
       case 'game':
         throw new GameRedirectException();
       case 'admin':

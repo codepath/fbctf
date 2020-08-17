@@ -1,5 +1,7 @@
 <?hh // strict
 
+require_once (__DIR__.'/../../models/PasswordResetToken.php'); #TODO necessary? not sure why tho
+
 class IndexAjaxController extends AjaxController {
   <<__Override>>
   protected function getFilters(): array<string, mixed> {
@@ -8,6 +10,7 @@ class IndexAjaxController extends AjaxController {
         'team_id' => FILTER_VALIDATE_INT,
         'team_name' => FILTER_UNSAFE_RAW,
         'password' => FILTER_UNSAFE_RAW,
+        'email' => FILTER_VALIDATE_EMAIL,
         'logo' => array(
           'filter' => FILTER_VALIDATE_REGEXP,
           'options' => array('regexp' => '/^[\w+-\/]+={0,2}$/'),
@@ -30,7 +33,7 @@ class IndexAjaxController extends AjaxController {
 
   <<__Override>>
   protected function getActions(): array<string> {
-    return array('register_team', 'register_names', 'login_team');
+    return array('register_team', 'register_names', 'login_team', 'password_reset_request','password_reset');
   }
 
   <<__Override>>
@@ -93,6 +96,13 @@ class IndexAjaxController extends AjaxController {
 
         // If we are here, login!
         return await $this->genLoginTeam($team_id, $password);
+      case 'password_reset_request':
+          $email = strval(must_have_idx($params, 'email'));
+          return await $this->genPasswordResetRequest($email);
+      case 'password_reset':
+          $token = must_have_string($params, 'token');
+          $password = must_have_string($params, 'password');
+          return await $this->genPasswordReset($token, $password);
       default:
         return Utils::error_response('Invalid action', 'index');
     }
@@ -283,4 +293,47 @@ class IndexAjaxController extends AjaxController {
       return Utils::error_response('Login failed', 'login');
     }
   }
+
+  private async function genPasswordResetRequest(
+    string $email,
+  ): Awaitable<string> {
+    $success = await PasswordResetToken::genCreate($email);
+    if ($success) {
+      return Utils::ok_response('Password reset request succesful', 'index');
+    } else {
+      return Utils::error_response('Password reset request failed', 'password_reset_request');
+    }
+  }
+
+  private async function genPasswordReset(
+    string $token, string $password
+  ): Awaitable<string> {
+    $success = await PasswordResetToken::genCheck($token);
+    if ($success) {
+      $team_id = await PasswordResetToken::genGetTeamId($token);
+      $strong_pw = await Configuration::gen('login_strongpasswords');
+      $pw_pass = true;
+
+      if ($strong_pw->getValue() !== '0') {
+        $password_type = await Configuration::genCurrentPasswordType();
+        if (!preg_match(strval($password_type->getValue()), $password)) {
+          $pw_pass = false;
+        }
+      }
+
+      if ($password !== '' && $pw_pass) {
+        $password_hash = Team::generateHash($password);
+        await Team::genUpdateTeamPassword($password_hash, $team_id);
+        await PasswordResetToken::genUse($token);
+
+        return Utils::ok_response('Password reset successful', 'index');
+      } else {
+        return Utils::error_response('Password reset failed', 'password_reset');
+      }
+    } else {
+      return Utils::error_response('Password reset failed', 'password_reset');
+    }
+  }
+
+
 }
