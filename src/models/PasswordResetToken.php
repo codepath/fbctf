@@ -66,7 +66,16 @@ class PasswordResetToken extends Model {
 
         $token = self::generate();
 
-        # TODO: send the mail
+        $host = strval(idx(Utils::getSERVER(), 'HTTP_HOST'));
+        $url = "https://" . $host . "/index.php?page=password_reset&token=" . $token;
+        $from = "CodePath Support <support@codepath.org>"; # TODO move to config
+
+        $to = $email;
+        $subject = "CTF Password Reset Request";
+        $txt = "Hello, use this link to reset your password for the CTF platform: " . $url . "\n\nIf you did not request a password reset, you can ignore this message.";
+        $headers = "From: " . $from . "\r\n";
+
+        mail($to,$subject,$txt,$headers);
 
         # clear out old, unused tokens
         $result = await $db->queryf(
