@@ -1119,6 +1119,8 @@ class IndexController extends Controller {
                 type="button">
                 {tr('Login')}
               </button>
+              <br /><br />
+              <a href="index.php?page=password_reset_request">Forgot Password</a>
             </div>
             <div class="form-el--footer">
               {$registration_button}
