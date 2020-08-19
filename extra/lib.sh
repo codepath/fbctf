@@ -378,7 +378,7 @@ function update_repo() {
   fi
 
   log "Pulling from remote repository"
-  git pull --rebase https://github.com/facebook/fbctf.git
+  git pull --rebase https://github.com/codepath/fbctf.git
 
   log "Starting sync to $__ctf_path"
   if [[ "$__code_path" != "$__ctf_path" ]]; then
