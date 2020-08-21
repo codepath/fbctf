@@ -1382,7 +1382,7 @@ class IndexController extends Controller {
                   autocomplete="off"
                   name="email"
                   type="text"
-                  maxlength={20}
+                  maxlength={75}
                 />
               </div>
             </fieldset>
