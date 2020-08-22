@@ -1418,7 +1418,7 @@ class IndexController extends Controller {
             <fieldset class="form-set fb-container container--small">
 
               <div class="form-el el--text el--password">
-                <label for="">{tr('Password')}</label>
+                <label for="">{tr('New Password')}</label>
                 <input autocomplete="off" name="password" type="password"/>
               </div>
               <div id="pw_error" class="form-el el--text completely-hidden">
